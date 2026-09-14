@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "epilepsynet-zebrafish"
+version = "1.0.0"
+description = "EpilepsyNet training, inference, and annotation tools for zebrafish larvae"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  {name = "Théo Mercé"},
+  {name = "Emilien Reaud"},
+  {name = "Etienne Windels"}
+]
+dependencies = [
+  "Flask>=3.0",
+  "matplotlib>=3.7",
+  "numpy>=1.24",
+  "openpyxl>=3.1",
+  "pandas>=2.0",
+  "torch>=2.0",
+  "tqdm>=4.65",
+  "wandb>=0.16"
+]
+
+[project.optional-dependencies]
+annotation = ["flask>=3.0", "matplotlib>=3.7", "openpyxl>=3.1", "tqdm>=4.65"]
+training = ["matplotlib>=3.7", "openpyxl>=3.1", "tqdm>=4.65", "wandb>=0.16"]
+test = ["onnxruntime>=1.17", "pytest>=8"]
+format = ["ruff>=0.11", "ty>=0.0.1", "tox>=4"]
+
+[project.scripts]
+epilepsynet-infer = "epilepsy_net.inference:main"
+epilepsynet-train = "epilepsy_net.training:main"
+epilepsynet-annotate = "annotator.app:main"
+epilepsynet-evaluate = "epilepsy_net.evaluation:main"
+epilepsynet-prepare-data = "scripts.prepare_data:main"
+
+[tool.setuptools.packages.find]
+include = ["epilepsy_net*", "annotator*", "scripts*"]
+
+[tool.setuptools.package-data]
+"annotator" = [
+  "templates/*.html",
+  "static/*.png",
+  "static/*.ico",
+  "static/css/*.css",
+  "static/js/*.js"
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+extend-exclude = ["build", "dist", "outputs", "data", "annotations", "wandb"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.ty.rules]
+unresolved-import = "ignore"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: checks the released ONNX graph"]
+
+
+

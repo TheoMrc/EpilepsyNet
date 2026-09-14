@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block head %}
+    <script src="{{ url_for('static', filename='js/videos.js') }}"></script>
+{% endblock head %}
+{% block content %}
+    <div class="content-section">
+        <h2>Vidéos chargées</h2>
+        {% for experiment, conditions in videos.items() %}
+            {% set experiment_index = loop.index %}
+            <div class="folder"
+                 onclick="toggleFolder('experiment-{{ experiment_index }}')">
+                <img src="{{ url_for('static', filename='folder.png') }}"
+                     alt="Folder"
+                     height="30"
+                     width="30" />
+                <h3>{{ experiment }}</h3>
+            </div>
+            <div id="experiment-{{ experiment_index }}"
+                 class="folder-content {{ 'hidden' if chosen_experiment == 'all' else 'visible' }}">
+                {% for condition, videos in conditions.items() %}
+                    {% set condition_index = loop.index0 %}
+                    <div class="folder"
+                         onclick="toggleFolder('condition-{{ experiment_index }}-{{ condition_index }}')">
+                        <img src="{{ url_for('static', filename='folder.png') }}"
+                             alt="Folder"
+                             height="30"
+                             width="30" />
+                        <h4>{{ condition.replace('Ê', 'µ').replace("_", " ") }}</h4>
+                    </div>
+                    <div id="condition-{{ experiment_index }}-{{ condition_index }}"
+                         class="folder-content">
+                        {% for video in videos %}
+                            <div class="video-item">
+                                <span>{{ video.removesuffix(".webm").replace("_"," ") }}</span>
+                                <a href="{{ url_for('annotate_video', experiment=experiment, condition=condition, video_number=video.removeprefix('fish_').removesuffix('.webm')) }}"
+                                   class="view-link">Voir la vidéo</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}

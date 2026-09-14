@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description"
+              content="EFAS - Plateforme pour annoter des vidéos de zebrafish." />
+        <meta name="keywords"
+              content="EFAS, annotation, vidéos, zebrafish, recherche, machine learning" />
+        <title>Félicitations</title>
+        <link rel="icon"
+              type="image/x-icon"
+              href="{{ url_for('static', filename='favicon.ico') }}" />
+        <link rel="stylesheet"
+              href="{{ url_for('static', filename='css/congrats.css') }}">
+    </head>
+    <body>
+        <div class="container">
+            <div class="background">
+                <div class="gradient-base"></div>
+            </div>
+            <div class="confetti-container" id="confettiContainer"></div>
+            <div class="main-content">
+                <h1>Félicitations !</h1>
+                <p>Vous avez annoté toutes les vidéos de cette expérience.</p>
+                <div class="buttons-container">
+                    <a href="{{ url_for('home') }}" class="button">Accueil</a>
+                    <a href="{{ url_for('choose_experiment') }}" class="button">Choisir une expérience</a>
+                </div>
+            </div>
+        </div>
+        <script src="{{ url_for('static', filename='js/congrats.js') }}"></script>
+    </body>
+</html>

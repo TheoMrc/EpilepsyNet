@@ -1,0 +1,21 @@
+{
+  "PCX_400_μM_CBZ_4h_1": {
+    "fish_4.webm": {
+      "timestamps": [
+        {
+          "state": "cbm",
+          "start": 26,
+          "end": 62
+        },
+        {
+          "state": "stationnary",
+          "start": 0,
+          "end": 3
+        }
+      ],
+      "comment": "",
+      "username": "Anja",
+      "reviewed": "Théo"
+    }
+  }
+}

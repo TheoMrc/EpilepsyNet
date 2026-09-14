@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block head %}
+    <script>const users = "{{ users }}";</script>
+    <script src="{{ url_for('static', filename='js/home.js') }}" defer></script>
+{% endblock head %}
+{% block content %}
+    {% if not username %}
+        <div class="page-blur" id="page-blur">
+            <div class="centered-textarea">
+                <h2>Veuillez-vous connecter pour continuer</h2>
+                <form action="{{ url_for('store_username_in_session') }}" method="post">
+                    <label class="user-label" for="username">Sélectionnez votre prénom :</label>
+                    <select class="dropdown-menu" id="username" name="username" required>
+                        <option value="" disabled selected>Choisissez un utilisateur</option>
+                        {% for user in users %}<option value="{{ user }}">{{ user }}</option>{% endfor %}
+                    </select>
+                    <div class="buttons-style">
+                        <button type="submit">Valider</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+    <div class="progress-section">
+        <div class="video-info">
+            <span class="label">Vidéos chargées :</span>
+            <span class="value">{{ nb_videos }}</span>
+        </div>
+        <div class="video-info">
+            <span class="label">Vidéos non annotées :</span>
+            <span class="value">{{ nb_unannotated }}</span>
+        </div>
+    </div>
+    <div class="progress-bar-section">
+        <div class="custom-progress-bar">
+            <div class="progress-fill" style="--target-width: {{ progress*100 }}%;"></div>
+        </div>
+        <p class="progress-percentage">{{ "{:.2%}".format(progress) }}</p>
+        <p class="under-progress-bar">
+            Progression : {{ nb_videos - nb_unannotated }} / {{ nb_videos }} vidéos
+            annotées
+        </p>
+        {# ── Review button for Théo & Emilien ──────────────────────────────────── #}
+        {% if username in ['Théo','Emilien'] %}
+            <form action="{{ url_for('start_review') }}"
+                  method="post"
+                  class="review-form">
+                <label class="user-label" for="target_user">Revoir annotations de :</label>
+                <select name="target_user" class="dropdown-menu" id="target_user" required>
+                    <option value="" disabled selected>Choisissez un utilisateur</option>
+                    {% for user in users if user != username %}<option value="{{ user }}">{{ user }}</option>{% endfor %}
+                </select>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="start_only" name="start_only" value="1" />
+                    <label for="start_only">Revoir le début des annotations uniquement</label>
+                </div>
+                <button class="review-button" type="submit">Reviewer les annotations</button>
+            </form>
+        {% endif %}
+    </div>
+    <div class="readme-section">
+        <h1>Objectif de l'application :</h1>
+        <p>
+            L'objectif de cette application est de permettre l'annotation des
+            comportements épileptiques (cbend multiples ou CBM) à partir de vidéos
+            obtenues grâce à DanioTracker. Les annotations récoltées seront utilisées
+            pour entraîner un modèle d'intelligence artificielle ayant pour but de
+            détecter automatiquement une larve réalisant un CBM ou restant immobile. Une
+            annotation représente l'intervalle de temps sur la vidéo durant laquelle une
+            larve réalise un CBM ou reste immobile. Si une larve est trop proche du bord
+            de la coupelle, il est préférable de passer la vidéo à l'aide du bouton
+            prévu à cet effet. En passant la vidéo, celle-ci ne sera pas annotée mais ne sera plus proposée
+        </p>
+        <h1>Exemples de CBM :</h1>
+    </div>
+    <div class="grid_parent">
+        <div class="example_videos">
+            {% for video_name in example_videos %}
+                <video class="example_video" controls>
+                    <source src="{{ url_for('static', filename='example_videos/' + video_name) }}"
+                            type="video/webm" />
+                </video>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="space"></div>
+{% endblock content %}

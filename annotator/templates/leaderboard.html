@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block head %}
+    <script>
+        const labels = {{ leaderboard_data.keys()|list|tojson }};
+        const scores = {{ leaderboard_data.values()|list|tojson }};
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="{{ url_for('static', filename='js/leaderboard.js') }}" defer></script>
+{% endblock head %}
+{% block content %}
+    <div class="leaderboard-container">
+        <h2 class="fade-in">Classement des utilisateurs</h2>
+        <div class="chart-container fade-in">
+            <canvas id="barChart"></canvas>
+        </div>
+        <div class="chart-container fade-in">
+            <canvas id="pieChart"></canvas>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,1 @@
+"""Epileptic Fish Annotation System."""

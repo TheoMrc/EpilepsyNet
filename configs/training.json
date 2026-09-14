@@ -1,0 +1,11 @@
+{
+  "SEED": 42,
+  "BATCH_SIZE": 8,
+  "LEARNING_RATE": 0.001,
+  "EPOCHS": 200,
+  "HIDDEN_CHANNELS": 32,
+  "N_LAYERS": 6,
+  "KERNEL_SIZE": 7,
+  "DROPOUT_RATE": 0.35,
+  "WANDB_MODE": "disabled"
+}

@@ -1,0 +1,21 @@
+{
+  "PCX_200_μM_4h_1": {
+    "fish_10.webm": {
+      "timestamps": [
+        {
+          "state": "stationnary",
+          "start": 0,
+          "end": 2
+        },
+        {
+          "state": "cbm",
+          "start": 9,
+          "end": 45
+        }
+      ],
+      "comment": "",
+      "username": "Anja",
+      "reviewed": "Théo"
+    }
+  }
+}

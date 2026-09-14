@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block head %}
+    <script>
+        const experiment = "{{ experiment }}";
+        const condition = "{{ condition }}";
+        const videoNumber = "{{ video_number }}";
+        const loadUnannotatedUrl = "{{ url_for('load_unannotated_video') }}";
+        const reviewNextUrl = "{{ url_for('review_next') }}";
+        const videoTimestamps = {{ video_timestamps | tojson }};
+        const videoComment = "{{ video_comment }}";
+        const reviewMode = {{ review_mode | default(False) | tojson }};
+        const saveReviewUrl = "{{ url_for('save_review') }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/annotate.js') }}" defer></script>
+{% endblock head %}
+{% block content %}
+    {% if review_mode %}
+        <div class="review-bar-section">
+            <div class="custom-progress-bar">
+                <div class="progress-fill" style="--target-width: {{ progress * 100 }}%;"></div>
+            </div>
+            <div class="progress-percentage-div">
+                <p class="progress-percentage">{{ "{:.2%}".format(progress) }}</p>
+            </div>
+        </div>
+    {% endif %}
+    <div class="annotate-panel">
+        <div class="video-container">
+            <video id="video">
+                <source src="{{ url_for('serve_video', experiment=experiment, condition=condition, video_number=video_number) }}"
+                        type="video/webm" />
+            </video>
+            <div id="video-label" class="video-label">Moving</div>
+        </div>
+        <div class="non-video-panels">
+            <div class="shortcuts-container">
+                <h3>Raccourcis Clavier</h3>
+                <ul>
+                    <li>
+                        <strong>Espace</strong>: Lire/Pause ; <strong>R</strong>: Auto-annoter la vidéo
+                    </li>
+                    <li>
+                        <strong>S</strong>: Ajouter une annotation "poisson immobile"
+                    </li>
+                    <li>
+                        <strong>Q</strong>: Ajouter une annotation "CBM"
+                    </li>
+                    <li>
+                        <strong>D</strong>: Supprimer la dernière annotation
+                    </li>
+                    <li>
+                        <strong>B</strong>: Sauvegarder
+                    </li>
+                    <li>
+                        <strong>N</strong>: Sauvegarder et continuer
+                    </li>
+                    <li>
+                        <strong>P</strong>: Passer la vidéo
+                    </li>
+                    <li>
+                        <strong>Flèches gauche/droite</strong>: Reculer/Avancer d'une frame
+                    </li>
+                    <li>
+                        <strong>Maj + Flèches gauche/droite</strong>: Reculer/Avancer
+                    </li>
+                    <li>
+                        <strong>A/E</strong>: Aller au début/fin de la vidéo
+                    </li>
+                    <li>
+                        <strong>Flèche haut</strong>: Désélectionner le marker
+                    </li>
+                </ul>
+            </div>
+            <div class="input-container">
+                <label for="user-input" class="user-label">Commentaires :</label>
+                <textarea id="user-input"
+                          class="user-input"
+                          rows="4"
+                          cols="50"
+                          placeholder="Écrivez votre commentaire ici..."></textarea>
+            </div>
+        </div>
+        <div class="buttons-container">
+            <div class="buttons-style">
+                <button onclick="allTimestamps=getAllTimestamps();saveTimestamps(allTimestamps);">Sauvegarder</button>
+                <button onclick="const ts1=getAllTimestamps(); saveTimestamps(ts1); window.location.href='{{ url_for("review_next") if review_mode else url_for('load_unannotated_video') }}';">
+                    Sauvegarder et continuer
+                </button>
+                <button onclick="saveTimestamps(null); window.location.href='{{ url_for("review_next") if review_mode else url_for('load_unannotated_video') }}';">
+                    Passer la vidéo
+                </button>
+            </div>
+            <div class="legend-container">
+                <div class="legend-item">
+                    <div class="color-box stationnary"></div>
+                    <span>Immobile</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box cbm"></div>
+                    <span>CBM</span>
+                </div>
+            </div>
+        </div>
+        <div class="annotations-container">
+            <div class="slider-container">
+                <div class="slider-wrapper">
+                    <input type="range"
+                           id="time-slider"
+                           class="slider"
+                           min="0"
+                           step="0.01"
+                           oninput="seekVideo()" />
+                    <label for="time-slider" class="hidden"></label>
+                    <div id="timestamps-container" class="timestamps-container"></div>
+                </div>
+            </div>
+            <div class="speed-controls">
+                <label for="speed-slider" class="speed-label">Vitesse de lecture :</label>
+                <span id="speed-value" class="speed-label">1x</span>
+                <input type="range"
+                       id="speed-slider"
+                       class="speed-slider"
+                       min="-2"
+                       max="2"
+                       step="0.25"
+                       value="0" />
+                <div class="buttons-style">
+                    <button onclick="setSpeed(1)">Réinitialiser</button>
+                </div>
+            </div>
+            <div id="timestamp-info-container" class="timestamp-info-container"></div>
+        </div>
+    </div>
+{% endblock content %}

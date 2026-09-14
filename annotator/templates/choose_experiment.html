@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="readme-section">
+        <h1>Choisissez une expérience à annoter :</h1>
+    </div>
+    <div class="experiment-grid">
+        {% for exp_name, progress in progress_per_experiment.items() %}
+            <div class="experiment-row">
+                <div class="experiment-name">
+                    <form action="{{ url_for('store_experiment_in_session') }}" method="post">
+                        <input type="hidden" name="chosen_experiment" value="{{ exp_name }}">
+                        <button type="submit" class="experiment-name-button">
+                            <h2>{{ exp_name }}</h2>
+                        </button>
+                    </form>
+                </div>
+                <div class="exp-progress-bar-section">
+                    <div class="custom-progress-bar">
+                        <div class="progress-fill" style="--target-width: {{ progress*100 }}%;"></div>
+                    </div>
+                </div>
+                <div class="progress-percentage-div">
+                    <p class="progress-percentage">{{ "{:.2%}".format(progress) }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="all-button">
+        <form action="{{ url_for('store_experiment_in_session') }}" method="post">
+            <input type="hidden" name="chosen_experiment" value="all">
+            <button class="buttons-style" type="submit">Toutes les expériences</button>
+        </form>
+    </div>
+{% endblock content %}
