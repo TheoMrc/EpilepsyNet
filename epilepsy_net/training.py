@@ -1,5 +1,5 @@
 """
-Training of EpilepsyNet model to predict moving state and CBM from behavioral time series data.
+Training of EpilepsyNet model to predict moving state and seizure behavior from behavioral time series data.
 Uses gradient accumulation to handle variable-length samples.
 """
 

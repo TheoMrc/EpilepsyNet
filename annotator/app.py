@@ -38,6 +38,13 @@ app.secret_key = os.environ.get("EPILEPSYNET_SECRET_KEY", secrets.token_hex(32))
 
 VIDEO_DIRECTORY = os.path.abspath(DATA_DIR)
 EXAMPLE_DIRECTORY = os.path.join(str(app.static_folder), "example_videos")
+REVIEWER_USERS = {
+    name.strip()
+    for name in os.environ.get(
+        "EPILEPSYNET_REVIEWERS", "Cool Zebrafish,Motivated Shark"
+    ).split(",")
+    if name.strip()
+}
 
 
 @app.context_processor
@@ -75,6 +82,7 @@ def home():
         example_videos=example_videos,
         progress=progress,
         users=users,
+        can_review=session.get("username") in REVIEWER_USERS,
     )
 
 
@@ -243,7 +251,7 @@ def review_next():
     reviewed_count = total_annots_for_target_user - len(annotations_to_review)
 
     if not annotations_to_review:
-        return f"Toutes les annotations de {target_user} ont été revues !"
+        return f"All annotations from {target_user} have been reviewed!"
     exp, cond, vid_name, data = annotations_to_review[0]
     video_number = vid_name.removeprefix("fish_").removesuffix(".webm")
     session["review_task"] = (exp, cond, vid_name)
@@ -270,7 +278,7 @@ def save_review():
     review_task = session.get("review_task")
     if not review_task:
         return jsonify(
-            {"status": "error", "message": "Aucune tâche de revue en cours."}
+            {"status": "error", "message": "No review task is currently active."}
         ), 400
     exp, cond, vid_name = review_task
     print(f"{exp=}, {cond=}, {vid_name=}")

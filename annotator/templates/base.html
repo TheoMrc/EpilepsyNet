@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="description"
-              content="EFAS - Plateforme pour annoter des vidéos de zebrafish." />
+              content="EFAS - Annotation platform for zebrafish videos." />
         <meta name="keywords"
-              content="EFAS, annotation, vidéos, zebrafish, recherche, machine learning" />
-        <title>Accueil - EFAS</title>
+              content="EFAS, annotation, videos, zebrafish, research, machine learning" />
+        <title>Home - EFAS</title>
         <link rel="icon"
               type="image/x-icon"
               href="{{ url_for('static', filename='favicon.ico') }}" />
@@ -23,16 +23,16 @@
                  height="62.5"
                  width="85" />
             <h1>EFAS</h1>
-            <a href="{{ url_for('home') }}">Accueil</a>
-            <a href="{{ url_for('choose_experiment') }}">Choisir une expérience</a>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('choose_experiment') }}">Choose an experiment</a>
             {% if chosen_experiment %}
-                <a href="{{ url_for('list_videos') }}">Voir les vidéos chargées</a>
-                <a href="{{ url_for('load_unannotated_video') }}">Continuer les annotations</a>
+                <a href="{{ url_for('list_videos') }}">View loaded videos</a>
+                <a href="{{ url_for('load_unannotated_video') }}">Continue annotating</a>
             {% endif %}
             <a href="{{ url_for('leaderboard') }}" id="leaderboard-logo">
                 <img src="{{ url_for('static', filename='Leaderboard.png') }}"
                      class="leaderboard-logo"
-                     alt="Logo"
+                     alt="Leaderboard"
                      height="40"
                      width="40" />
             </a>
@@ -40,7 +40,7 @@
         {% block content %}
         {% endblock content %}
         <div class="footer">
-            <p>© 2025 EFAS. Tous droits réservés.</p>
+            <p>© 2025 EFAS. All rights reserved.</p>
         </div>
     </body>
 </html>

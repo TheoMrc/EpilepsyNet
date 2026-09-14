@@ -1,9 +1,9 @@
 """
 Evaluate fish-level metrics for the trained EpilepsyNet model on the validation split.
 
-Metrics (CBM channel focused):
-- Fish-level presence classification (has any CBM vs none): precision, recall, F1, confusion counts.
-- Average CBM duration per fish: labeled vs predicted.
+Metrics (seizure channel focused):
+- Fish-level presence classification (has any seizure vs none): precision, recall, F1, confusion counts.
+- Average seizure duration per fish: labeled vs predicted.
 - Extras: duration MAE, duration correlation (Pearson), presence accuracy.
 
 Outputs a summary to stdout and writes JSON and XLSX files to explicit paths.
@@ -88,7 +88,7 @@ def evaluate_dataset(dataset: list[dict]) -> dict[str, float | int | str]:
     # Load model
     model = load_model()
 
-    # Determine class index for CBM
+    # Determine class index for the seizure state
     label_cols = LABEL_COLS
     if os.path.isfile(CONFIG_PATH):
         with open(CONFIG_PATH, encoding="utf8") as f:
@@ -124,14 +124,14 @@ def evaluate_dataset(dataset: list[dict]) -> dict[str, float | int | str]:
         label_ch_time = df[label_cols].values.astype(float).T  # (C, T)
         true_classes = argmax_along_classes(label_ch_time)
 
-        # Fish-level CBM presence flag
+        # Fish-level seizure presence flag
         has_cbm_true = int(np.any(true_classes == cbm_index))
         has_cbm_pred = int(np.any(pred_classes == cbm_index))
 
         presence_true.append(has_cbm_true)
         presence_pred.append(has_cbm_pred)
 
-        # Total CBM duration per fish
+        # Total seizure duration per fish
         duration_true.append(find_total_duration(true_classes, cbm_index))
         duration_pred.append(find_total_duration(pred_classes, cbm_index))
 
@@ -181,7 +181,7 @@ def evaluate_dataset(dataset: list[dict]) -> dict[str, float | int | str]:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Evaluate fish-level CBM metrics")
+    parser = argparse.ArgumentParser(description="Evaluate fish-level seizure metrics")
     split = parser.add_mutually_exclusive_group()
     split.add_argument(
         "--on-val", action="store_true", help="Evaluate on validation split only"
@@ -224,18 +224,18 @@ def main():
     descriptions = {
         "split": "Dataset subset used: 'train', 'val', or 'all'",
         "n_fish": "Number of fish evaluated in this subset",
-        "cbm_presence_precision": "Among fish predicted to have any CBM, fraction that truly have CBM (TP / (TP + FP))",
-        "cbm_presence_recall": "Among fish that truly have any CBM, fraction predicted to have CBM (TP / (TP + FN))",
+        "cbm_presence_precision": "Among fish predicted to have any seizure, fraction that truly have a seizure (TP / (TP + FP))",
+        "cbm_presence_recall": "Among fish that truly have any seizure, fraction predicted to have a seizure (TP / (TP + FN))",
         "cbm_presence_f1": "Harmonic mean of presence precision and recall (2PR/(P+R))",
         "cbm_presence_accuracy": "Overall correctness for presence classification ((TP + TN) / total fish)",
-        "cbm_presence_tp": "Fish with CBM present and predicted present",
-        "cbm_presence_fp": "Fish with CBM absent but predicted present",
-        "cbm_presence_fn": "Fish with CBM present but predicted absent",
-        "cbm_presence_tn": "Fish with CBM absent and predicted absent",
-        "avg_cbm_duration_true": "Average number of frames labeled as CBM per fish",
-        "avg_cbm_duration_pred": "Average number of frames predicted as CBM per fish",
-        "cbm_duration_mae": "Mean absolute error between labeled and predicted CBM duration per fish",
-        "cbm_duration_corr": "Pearson correlation between labeled and predicted CBM durations across fish",
+        "cbm_presence_tp": "Fish with a seizure present and predicted present",
+        "cbm_presence_fp": "Fish with no seizure but predicted present",
+        "cbm_presence_fn": "Fish with a seizure present but predicted absent",
+        "cbm_presence_tn": "Fish with no seizure and predicted absent",
+        "avg_cbm_duration_true": "Average number of frames labeled as seizure per fish",
+        "avg_cbm_duration_pred": "Average number of frames predicted as seizure per fish",
+        "cbm_duration_mae": "Mean absolute error between labeled and predicted seizure duration per fish",
+        "cbm_duration_corr": "Pearson correlation between labeled and predicted seizure durations across fish",
     }
 
     rows = []

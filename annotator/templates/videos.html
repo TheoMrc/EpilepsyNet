@@ -4,7 +4,7 @@
 {% endblock head %}
 {% block content %}
     <div class="content-section">
-        <h2>Vidéos chargées</h2>
+        <h2>Loaded videos</h2>
         {% for experiment, conditions in videos.items() %}
             {% set experiment_index = loop.index %}
             <div class="folder"
@@ -25,7 +25,7 @@
                              alt="Folder"
                              height="30"
                              width="30" />
-                        <h4>{{ condition.replace('Ê', 'µ').replace("_", " ") }}</h4>
+                        <h4>{{ condition.replace("_", " ") }}</h4>
                     </div>
                     <div id="condition-{{ experiment_index }}-{{ condition_index }}"
                          class="folder-content">
@@ -33,7 +33,7 @@
                             <div class="video-item">
                                 <span>{{ video.removesuffix(".webm").replace("_"," ") }}</span>
                                 <a href="{{ url_for('annotate_video', experiment=experiment, condition=condition, video_number=video.removeprefix('fish_').removesuffix('.webm')) }}"
-                                   class="view-link">Voir la vidéo</a>
+                                   class="view-link">View video</a>
                             </div>
                         {% endfor %}
                     </div>

@@ -7,15 +7,15 @@
     {% if not username %}
         <div class="page-blur" id="page-blur">
             <div class="centered-textarea">
-                <h2>Veuillez-vous connecter pour continuer</h2>
+                <h2>Choose an annotator to continue</h2>
                 <form action="{{ url_for('store_username_in_session') }}" method="post">
-                    <label class="user-label" for="username">Sélectionnez votre prénom :</label>
+                    <label class="user-label" for="username">Select your annotator alias:</label>
                     <select class="dropdown-menu" id="username" name="username" required>
-                        <option value="" disabled selected>Choisissez un utilisateur</option>
+                        <option value="" disabled selected>Choose an annotator</option>
                         {% for user in users %}<option value="{{ user }}">{{ user }}</option>{% endfor %}
                     </select>
                     <div class="buttons-style">
-                        <button type="submit">Valider</button>
+                        <button type="submit">Continue</button>
                     </div>
                 </form>
             </div>
@@ -23,11 +23,11 @@
     {% endif %}
     <div class="progress-section">
         <div class="video-info">
-            <span class="label">Vidéos chargées :</span>
+            <span class="label">Loaded videos:</span>
             <span class="value">{{ nb_videos }}</span>
         </div>
         <div class="video-info">
-            <span class="label">Vidéos non annotées :</span>
+            <span class="label">Unannotated videos:</span>
             <span class="value">{{ nb_unannotated }}</span>
         </div>
     </div>
@@ -37,41 +37,39 @@
         </div>
         <p class="progress-percentage">{{ "{:.2%}".format(progress) }}</p>
         <p class="under-progress-bar">
-            Progression : {{ nb_videos - nb_unannotated }} / {{ nb_videos }} vidéos
-            annotées
+            Progress: {{ nb_videos - nb_unannotated }} / {{ nb_videos }} videos annotated
         </p>
-        {# ── Review button for Théo & Emilien ──────────────────────────────────── #}
-        {% if username in ['Théo','Emilien'] %}
+        {# Review access is restricted to the configured reviewer aliases. #}
+        {% if can_review %}
             <form action="{{ url_for('start_review') }}"
                   method="post"
                   class="review-form">
-                <label class="user-label" for="target_user">Revoir annotations de :</label>
+                <label class="user-label" for="target_user">Review annotations by:</label>
                 <select name="target_user" class="dropdown-menu" id="target_user" required>
-                    <option value="" disabled selected>Choisissez un utilisateur</option>
+                    <option value="" disabled selected>Choose an annotator</option>
                     {% for user in users if user != username %}<option value="{{ user }}">{{ user }}</option>{% endfor %}
                 </select>
                 <div class="checkbox-row">
                     <input type="checkbox" id="start_only" name="start_only" value="1" />
-                    <label for="start_only">Revoir le début des annotations uniquement</label>
+                    <label for="start_only">Review only the beginning of the annotations</label>
                 </div>
-                <button class="review-button" type="submit">Reviewer les annotations</button>
+                <button class="review-button" type="submit">Review annotations</button>
             </form>
         {% endif %}
     </div>
     <div class="readme-section">
-        <h1>Objectif de l'application :</h1>
+        <h1>Application objective</h1>
         <p>
-            L'objectif de cette application est de permettre l'annotation des
-            comportements épileptiques (cbend multiples ou CBM) à partir de vidéos
-            obtenues grâce à DanioTracker. Les annotations récoltées seront utilisées
-            pour entraîner un modèle d'intelligence artificielle ayant pour but de
-            détecter automatiquement une larve réalisant un CBM ou restant immobile. Une
-            annotation représente l'intervalle de temps sur la vidéo durant laquelle une
-            larve réalise un CBM ou reste immobile. Si une larve est trop proche du bord
-            de la coupelle, il est préférable de passer la vidéo à l'aide du bouton
-            prévu à cet effet. En passant la vidéo, celle-ci ne sera pas annotée mais ne sera plus proposée
+            This application is used to annotate seizure-related behaviors in videos
+            acquired with DanioTracker. The collected annotations are used to train an
+            artificial-intelligence model that can automatically detect a larva
+            performing a seizure or remaining stationary. An annotation is a time
+            interval during which a larva performs a seizure or remains stationary.
+            If a larva is too close to the edge of the dish, skip the video with the
+            dedicated button. A skipped video is not annotated and will not be
+            proposed again.
         </p>
-        <h1>Exemples de CBM :</h1>
+        <h1>Seizure examples</h1>
     </div>
     <div class="grid_parent">
         <div class="example_videos">

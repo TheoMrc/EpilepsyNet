@@ -13,7 +13,7 @@ manuscript revision.
 
 EpilepsyNet receives 14 DanioTracker behavioral features at millisecond
 resolution and assigns one of three mutually exclusive states to each sample:
-not_moving, cbm (seizure-related convulsive body movement), or swimming.
+not_moving, cbm (the internal label for seizure-related movement), or swimming.
 
 ## Released model
 
@@ -39,7 +39,7 @@ EpilepsyNet/
 ├── annotator/                EFAS Flask annotation and review application
 ├── configs/                  Released model and training configurations
 ├── models/                   Released PyTorch/ONNX weights and validation metrics
-├── examples/                 Small real-data videos, time series, and EFAS annotations
+├── examples/                 Real-data videos, time series, annotations, and demo media
 ├── scripts/                  Data preparation utilities
 ├── tests/                    Smoke tests and real-example integration tests
 ├── pyproject.toml            Project metadata, dependencies, and Ruff/Ty configuration
@@ -55,9 +55,9 @@ and `utils.py` contains feature definitions, path handling, plotting, and
 interval utilities.
 
 `annotator/` is the Epileptic Fish Annotation System (EFAS). It provides the
-browser interface used to select experiments, annotate convulsive body
-movement (CBM) intervals, review annotations, and request model-assisted
-predictions. The application writes annotations to the directory configured by
+browser interface used to select experiments, annotate seizure intervals, review
+annotations, and request model-assisted predictions. The application writes
+annotations to the directory configured by
 `EPILEPSYNET_ANNOTATIONS_DIR` and reads videos/time series from
 `EPILEPSYNET_DATA_DIR`.
 
@@ -145,8 +145,11 @@ Each CSV contains one row per millisecond and all 14 feature columns listed in
 `configs/model.json`. Annotation JSON files are organized by condition and
 video; each video record contains inclusive `timestamps` intervals whose
 `state` is `cbm` or `stationnary` (the historical spelling retained by EFAS).
-All other samples are treated as swimming. The files under `examples/` provide
-three complete real instances of this structure. To train, run:
+In the EFAS interface, `cbm` is displayed as **Seizure** and
+`stationnary` as **Stationary**; the serialized labels stay unchanged
+for model compatibility. All other samples are treated as swimming. The files
+under `examples/` provide three complete real instances of this
+structure. To train, run:
 
     python -m epilepsy_net.training --config configs/training.json --data-dir path/to/data --annotations-dir path/to/annotations --output-dir outputs
 
@@ -174,8 +177,12 @@ locations, then start it:
     python -m annotator.app
 
 The tool supports manual intervals, model-assisted intervals, comments, user
-tracking, and review. Replace annotator/users.json with the desired
-annotator names. Use a strong EPILEPSYNET_SECRET_KEY for a shared deployment.
+tracking, and review. The bundled annotator aliases are `Cool Zebrafish`,
+`Motivated Shark`, `Curious Guppy`, and `Calm Seahorse`; replace
+`annotator/users.json` with the desired aliases for a deployment. Review access
+is enabled for `Cool Zebrafish` and `Motivated Shark` by default and can be
+changed with the comma-separated `EPILEPSYNET_REVIEWERS` environment variable.
+Use a strong EPILEPSYNET_SECRET_KEY for a shared deployment.
 
 To prepare videos and XLSX exports in the expected layout:
 
@@ -183,17 +190,23 @@ To prepare videos and XLSX exports in the expected layout:
 
 ### Included real-data examples
 
-Three short real videos, their matching DanioTracker time series, and existing
-EFAS annotations are included under `examples/`. The same three videos are also
-shown in the application's CBM example gallery. From PowerShell, launch EFAS on
-the included example dataset with:
+Three complete real videos, their matching DanioTracker time series, and existing
+EFAS annotations are included under `examples/`. A separate
+`EFAS_demo_unannotated` experiment contains three copies with matching
+time-series files and starts without an annotation JSON, so users can practice
+annotating without changing the released examples. Six full-length demonstration
+clips from the original BreakdanceFish EFAS gallery are also shown on the home
+page as seizure examples. From PowerShell, launch EFAS on the included dataset
+with:
 
     $env:EPILEPSYNET_DATA_DIR = (Resolve-Path "examples/data")
     $env:EPILEPSYNET_ANNOTATIONS_DIR = (Resolve-Path "examples/annotations")
     epilepsynet-annotate
 
-Then open http://127.0.0.1:5000. The examples are intended only to exercise and
-demonstrate EFAS; they are not an additional training or validation dataset.
+Then open http://127.0.0.1:5000. Select `EFAS_demo_unannotated` from the
+experiment list to try manual annotation as a non-reviewer. The examples are
+intended only to exercise and demonstrate EFAS; they are not an additional
+training or validation dataset.
 
 ## Verification
 

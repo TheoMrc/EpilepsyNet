@@ -153,15 +153,15 @@ function updateSingleInterval(marker) {
   const end = Math.floor((endPercent / 100) * videoDurationMs);
   const startSpan = info.querySelector(".info-start");
   const endSpan = info.querySelector(".info-end");
-  startSpan.textContent = `Début: ${start} ms`;
-  endSpan.textContent = `Fin: ${end} ms`;
+  startSpan.textContent = `Start: ${start} ms`;
+  endSpan.textContent = `End: ${end} ms`;
 }
 
 function displayInterval(startPercent, endPercent, state) {
   const width = endPercent - startPercent;
   let start = Math.floor((startPercent / 100) * videoDurationMs);
   let end = Math.floor((endPercent / 100) * videoDurationMs);
-  const label = state === "stationnary" ? "Immobile" : "CBM";
+  const label = state === "stationnary" ? "Stationary" : "Seizure";
   const labelColor = state === "stationnary" ? "#05ce5a" : "dodgerblue";
   timestampContainer.insertAdjacentHTML(
     "beforeend",
@@ -169,9 +169,9 @@ function displayInterval(startPercent, endPercent, state) {
   );
   infoContainer.innerHTML += `<div class="timestamp-info">
        <span class="info-state" style="color: ${labelColor}">${label}</span>
-       <span class="info-start">Début: ${start} ms</span>
-       <span class="info-end">Fin: ${end} ms</span>
-       <button class="delete-btn">Supprimer</button>
+       <span class="info-start">Start: ${start} ms</span>
+       <span class="info-end">End: ${end} ms</span>
+       <button class="delete-btn">Delete</button>
      </div>`;
 }
 
@@ -239,12 +239,12 @@ function saveTimestamps(allTimestamps) {
       if (data.status !== "success") {
         alert(
           reviewMode
-            ? "Échec de la sauvegarde de la review."
-            : "Échec de la sauvegarde des annotations.",
+            ? "The review could not be saved."
+            : "The annotations could not be saved.",
         );
       }
     })
-    .catch((err) => console.error("Erreur sauvegarde :", err));
+    .catch((err) => console.error("Save error:", err));
 }
 
 function clipMarkerPercent(marker, percent) {
@@ -419,12 +419,12 @@ function updateOverlay() {
   } else if (match.state === "stationnary") {
     video.style.filter =
       "sepia(1) saturate(.8) hue-rotate(70deg) brightness(0.8)";
-    videoLabel.textContent = "Immobile";
+    videoLabel.textContent = "Stationary";
     videoLabel.style.color = "#05ce5a";
   } else {
     video.style.filter =
       "sepia(1) saturate(.8) hue-rotate(180deg) brightness(0.8)";
-    videoLabel.textContent = "CBM";
+    videoLabel.textContent = "Seizure";
     videoLabel.style.color = "dodgerblue";
   }
 }

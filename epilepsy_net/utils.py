@@ -176,7 +176,7 @@ def plot_pred_and_labels(proba_preds, val_labels, n_examples, file_path):
         labels[0, 0] = 1 - labels[0, 0]
         t = np.arange(probs.shape[-1])
         for ch, label_col in zip(
-            range(n_pred_channels), ("Moving state", "CBM state"), strict=True
+            range(n_pred_channels), ("Moving state", "Seizure state"), strict=True
         ):
             ax = axes[i, ch]
             ax.plot(t, probs[0, ch], color="blue", lw=2)

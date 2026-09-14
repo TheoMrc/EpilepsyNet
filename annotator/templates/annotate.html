@@ -34,70 +34,70 @@
         </div>
         <div class="non-video-panels">
             <div class="shortcuts-container">
-                <h3>Raccourcis Clavier</h3>
+                <h3>Keyboard shortcuts</h3>
                 <ul>
                     <li>
-                        <strong>Espace</strong>: Lire/Pause ; <strong>R</strong>: Auto-annoter la vidéo
+                        <strong>Space</strong>: Play/Pause; <strong>R</strong>: Auto-annotate the video
                     </li>
                     <li>
-                        <strong>S</strong>: Ajouter une annotation "poisson immobile"
+                        <strong>S</strong>: Add a "stationary fish" annotation
                     </li>
                     <li>
-                        <strong>Q</strong>: Ajouter une annotation "CBM"
+                        <strong>Q</strong>: Add a "Seizure" annotation
                     </li>
                     <li>
-                        <strong>D</strong>: Supprimer la dernière annotation
+                        <strong>D</strong>: Delete the last annotation
                     </li>
                     <li>
-                        <strong>B</strong>: Sauvegarder
+                        <strong>B</strong>: Save
                     </li>
                     <li>
-                        <strong>N</strong>: Sauvegarder et continuer
+                        <strong>N</strong>: Save and continue
                     </li>
                     <li>
-                        <strong>P</strong>: Passer la vidéo
+                        <strong>P</strong>: Skip video
                     </li>
                     <li>
-                        <strong>Flèches gauche/droite</strong>: Reculer/Avancer d'une frame
+                        <strong>Left/right arrows</strong>: Move back/forward one frame
                     </li>
                     <li>
-                        <strong>Maj + Flèches gauche/droite</strong>: Reculer/Avancer
+                        <strong>Shift + left/right arrows</strong>: Move back/forward
                     </li>
                     <li>
-                        <strong>A/E</strong>: Aller au début/fin de la vidéo
+                        <strong>A/E</strong>: Go to the beginning/end of the video
                     </li>
                     <li>
-                        <strong>Flèche haut</strong>: Désélectionner le marker
+                        <strong>Up arrow</strong>: Deselect the marker
                     </li>
                 </ul>
             </div>
             <div class="input-container">
-                <label for="user-input" class="user-label">Commentaires :</label>
+                <label for="user-input" class="user-label">Comments:</label>
                 <textarea id="user-input"
                           class="user-input"
                           rows="4"
                           cols="50"
-                          placeholder="Écrivez votre commentaire ici..."></textarea>
+                          placeholder="Write your comment here..."></textarea>
             </div>
         </div>
         <div class="buttons-container">
             <div class="buttons-style">
-                <button onclick="allTimestamps=getAllTimestamps();saveTimestamps(allTimestamps);">Sauvegarder</button>
+                <button onclick="allTimestamps=getAllTimestamps();saveTimestamps(allTimestamps);">Save</button>
                 <button onclick="const ts1=getAllTimestamps(); saveTimestamps(ts1); window.location.href='{{ url_for("review_next") if review_mode else url_for('load_unannotated_video') }}';">
-                    Sauvegarder et continuer
+                    Save and continue
                 </button>
                 <button onclick="saveTimestamps(null); window.location.href='{{ url_for("review_next") if review_mode else url_for('load_unannotated_video') }}';">
-                    Passer la vidéo
+                    Skip video
                 </button>
             </div>
             <div class="legend-container">
                 <div class="legend-item">
                     <div class="color-box stationnary"></div>
-                    <span>Immobile</span>
+                    <span>Stationary</span>
                 </div>
                 <div class="legend-item">
                     <div class="color-box cbm"></div>
-                    <span>CBM</span>
+                    <span>Seizure</span>
                 </div>
             </div>
         </div>
@@ -115,7 +115,7 @@
                 </div>
             </div>
             <div class="speed-controls">
-                <label for="speed-slider" class="speed-label">Vitesse de lecture :</label>
+                <label for="speed-slider" class="speed-label">Playback speed:</label>
                 <span id="speed-value" class="speed-label">1x</span>
                 <input type="range"
                        id="speed-slider"
@@ -125,7 +125,7 @@
                        step="0.25"
                        value="0" />
                 <div class="buttons-style">
-                    <button onclick="setSpeed(1)">Réinitialiser</button>
+                    <button onclick="setSpeed(1)">Reset</button>
                 </div>
             </div>
             <div id="timestamp-info-container" class="timestamp-info-container"></div>

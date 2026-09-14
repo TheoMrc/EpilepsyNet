@@ -16,20 +16,31 @@ EXAMPLES = (
         "2025_01_21_CBZ_ToCP_PTZ_PCX_n=3",
         "PCX_200_μM_3h_1",
         "4",
-        "pcx_200uM_3h_fish_4_cbm.webm",
     ),
     (
         "2025_01_14_CBZ_ToCP_PTZ_PCX_n=2",
         "PCX_400_μM_CBZ_4h_1",
         "4",
-        "pcx_400uM_cbz_4h_fish_4_cbm.webm",
     ),
     (
         "2025_02_12_PCX_Gamme_n=2",
         "PCX_200_μM_4h_1",
         "10",
-        "pcx_200uM_4h_fish_10_cbm.webm",
     ),
+)
+GALLERY_EXAMPLES = (
+    "CBM_1.webm",
+    "CBM_2.webm",
+    "CBM_3.webm",
+    "CBM_4.webm",
+    "CBM_5.webm",
+    "Spaghetti.webm",
+)
+UNANNOTATED_EXPERIMENT = "EFAS_demo_unannotated"
+UNANNOTATED_VIDEOS = (
+    ("Demo_video_1", "1"),
+    ("Demo_video_2", "2"),
+    ("Demo_video_3", "3"),
 )
 
 
@@ -47,7 +58,7 @@ def _load_example_app(monkeypatch):
 
 
 def test_real_examples_are_complete_and_browsable(monkeypatch):
-    for experiment, condition, video_number, gallery_name in EXAMPLES:
+    for experiment, condition, video_number in EXAMPLES:
         annotations = json.loads(
             (
                 ROOT / "examples" / "annotations" / f"{experiment}_annotations.json"
@@ -65,6 +76,7 @@ def test_real_examples_are_complete_and_browsable(monkeypatch):
             interval["state"] == "cbm"
             for interval in annotations[condition][video_name]["timestamps"]
         )
+    for gallery_name in GALLERY_EXAMPLES:
         assert (
             ROOT / "annotator" / "static" / "example_videos" / gallery_name
         ).stat().st_size > 0
@@ -72,9 +84,9 @@ def test_real_examples_are_complete_and_browsable(monkeypatch):
     client = _load_example_app(monkeypatch).test_client()
     home = client.get("/")
     assert home.status_code == 200
-    assert all(gallery_name.encode() in home.data for _, _, _, gallery_name in EXAMPLES)
+    assert all(gallery_name.encode() in home.data for gallery_name in GALLERY_EXAMPLES)
     assert client.get("/experiment_choice").status_code == 200
-    experiment, condition, video_number, _ = EXAMPLES[0]
+    experiment, condition, video_number = EXAMPLES[0]
     with client.session_transaction() as session:
         session["chosen_experiment"] = experiment
         session["username"] = "Reviewer"
@@ -91,7 +103,28 @@ def test_real_examples_are_complete_and_browsable(monkeypatch):
 
 def test_real_example_supports_model_assisted_annotation(monkeypatch):
     client = _load_example_app(monkeypatch).test_client()
-    experiment, condition, video_number, _ = EXAMPLES[0]
+    experiment, condition, video_number = EXAMPLES[0]
     response = client.get(f"/predict/{experiment}/{condition}/{video_number}")
     assert response.status_code == 200
     assert isinstance(response.get_json(), list)
+
+
+def test_unannotated_demo_videos_are_available(monkeypatch):
+    app = _load_example_app(monkeypatch)
+    client = app.test_client()
+
+    with client.session_transaction() as session:
+        session["chosen_experiment"] = UNANNOTATED_EXPERIMENT
+        session["username"] = "Curious Guppy"
+
+    assert client.get("/videos").status_code == 200
+    for condition, video_number in UNANNOTATED_VIDEOS:
+        annotation_page = client.get(
+            f"/annotate/{UNANNOTATED_EXPERIMENT}/{condition}/{video_number}"
+        )
+        assert annotation_page.status_code == 200
+        video_response = client.get(
+            f"/serve_video/{UNANNOTATED_EXPERIMENT}/{condition}/{video_number}"
+        )
+        assert video_response.status_code == 200
+        assert video_response.mimetype == "video/webm"
